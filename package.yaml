@@ -1,0 +1,17 @@
+name: superfuse
+version: 0.0.1
+category: Data, Language
+synopsis: An array computation DSL.
+stability: alpha
+maintainer: Shao Cheng <astrohavoc@gmail.com>
+copyright: (c) 2016 Shao Cheng
+license: BSD3
+github: TerrorJack/superfuse
+
+ghc-options: -Wall
+
+dependencies:
+  - base >= 4.9 && < 4.10
+
+library:
+  source-dirs: src

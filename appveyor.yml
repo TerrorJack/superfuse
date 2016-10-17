@@ -1,0 +1,21 @@
+shallow_clone: true
+
+cache:
+  - "%APPDATA%\\stack"
+  - "%APPVEYOR_BUILD_FOLDER%\\.stack-work"
+
+install:
+  - cinst haskell-stack
+
+before_build:
+  - stack setup > NUL
+
+build: off
+
+build_script:
+  - stack build -j1 --haddock --no-haddock-deps --test --no-run-tests --bench --no-run-benchmarks
+
+test: off
+
+test_script:
+  - stack test
