@@ -34,12 +34,9 @@ data SBinOp :: SType -> Bool -> Type where
     Add, Mul :: SBinOp t 'True
     Sub, Div :: SBinOp t 'False
 
--- | Vector shapes
-type VShape = [Nat]
-
 -- | Vector expressions
-data VExpr :: SType -> VShape -> Type where
-    SLift :: HsSType t -> VExpr t '[]
-    SCopy :: VExpr t '[] -> VExpr t sh
-    VBinApp :: SBinOp t f -> VExpr t sh -> VExpr t sh -> VExpr t sh
-    VFold :: SBinOp t 'True -> VExpr t sh -> VExpr t '[]
+data VExpr :: SType -> Nat -> Type where
+    SLift :: HsSType t -> VExpr t 0
+    SCopy :: VExpr t 0 -> VExpr t dim
+    VBinApp :: SBinOp t f -> VExpr t dim -> VExpr t dim -> VExpr t dim
+    VFold :: SBinOp t 'True -> VExpr t dim -> VExpr t 0
