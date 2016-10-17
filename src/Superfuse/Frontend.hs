@@ -29,14 +29,10 @@ type family HsSType t = h | h -> t where
     HsSType ('SFType 'F32) = Float
     HsSType ('SFType 'F64) = Double
 
--- | Scalar binary operators satisfying monoid laws
-data MBinOp :: SType -> Type where
-    Add, Mul :: MBinOp t
-
--- | Scalar binary operators
-data SBinOp :: SType -> Type where
-    SMBinOp :: MBinOp t -> SBinOp t
-    Sub, Div :: SBinOp t
+-- | Scalar binary operators. The Bool indicates whether it satisfies monoid laws.
+data SBinOp :: SType -> Bool -> Type where
+    Add, Mul :: SBinOp t 'True
+    Sub, Div :: SBinOp t 'False
 
 -- | Vector shapes
 type VShape = [Nat]
@@ -45,5 +41,5 @@ type VShape = [Nat]
 data VExpr :: SType -> VShape -> Type where
     SLift :: HsSType t -> VExpr t '[]
     SCopy :: VExpr t '[] -> VExpr t sh
-    VBinApp :: SBinOp t -> VExpr t sh -> VExpr t sh -> VExpr t sh
-    VFold :: MBinOp t -> VExpr t sh -> VExpr t '[]
+    VBinApp :: SBinOp t f -> VExpr t sh -> VExpr t sh -> VExpr t sh
+    VFold :: SBinOp t 'True -> VExpr t sh -> VExpr t '[]
