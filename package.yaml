@@ -10,8 +10,14 @@ github: TerrorJack/superfuse
 
 ghc-options: -Wall
 
+default-extensions:
+    - GADTs
+    - TypeFamilyDependencies
+    - TypeInType
+    - TypeOperators
+
 dependencies:
-  - base >= 4.9 && < 4.10
+    - base >= 4.9 && < 4.10
 
 library:
   source-dirs: src
