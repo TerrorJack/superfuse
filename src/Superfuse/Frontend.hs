@@ -15,7 +15,7 @@ data UType = U8 | U16 | U32 | U64
 data FType = F32 | F64
 
 -- | Scalar types
-data SType = SIType IType | SUType UType | SFType FType
+data SType = SIType IType | SUType UType | SBType | SFType FType
 
 -- | Scalar types' corresponding Haskell types
 type family HsSType t = h | h -> t where
@@ -27,13 +27,14 @@ type family HsSType t = h | h -> t where
     HsSType ('SUType 'U16) = Word16
     HsSType ('SUType 'U32) = Word32
     HsSType ('SUType 'U64) = Word64
+    HsSType ('SBType)      = Bool
     HsSType ('SFType 'F32) = Float
     HsSType ('SFType 'F64) = Double
 
 -- | Scalar unary operators.
-data SUnaryOp :: SType -> Type where
-    Neg :: SUnaryOp t
-    Abs :: SUnaryOp t
+data SUnOp :: SType -> Type where
+    Neg :: SUnOp t
+    Abs :: SUnOp t
 
 -- | Scalar binary operators. The Bool indicates whether it satisfies monoid laws.
 data SBinOp :: SType -> Bool -> Type where
@@ -41,13 +42,13 @@ data SBinOp :: SType -> Bool -> Type where
     Sub, Div :: SBinOp t 'False
     Max, Min :: SBinOp t 'True
 
--- | Scalar trinary operators.
-data STriOp :: SType -> Type where
-    Fma :: STriOp t    -- fused multiply and add operation: a * b + c
-
 -- | Vector expressions
 data VExpr :: SType -> Nat -> Type where
-    SLift :: HsSType t -> VExpr t 0
-    SCopy :: VExpr t 0 -> VExpr t dim
-    VBinApp :: SBinOp t f -> VExpr t dim -> VExpr t dim -> VExpr t dim
-    VFold :: SBinOp t 'True -> VExpr t dim -> VExpr t 0
+    SLift          :: HsSType t -> VExpr t 0
+    SCopy          :: VExpr t 0 -> VExpr t dim
+    VReshape       :: VExpr t dim -> VExpr t dim'
+    VCoerce        :: VExpr t dim -> VExpr t' dim
+    VUnApp         :: SUnOp t -> VExpr t dim -> VExpr t dim
+    VBinApp        :: SBinOp t f -> VExpr t dim -> VExpr t dim -> VExpr t dim
+    VFold          :: SBinOp t 'True -> VExpr t dim -> VExpr t 0
+    VFoldl, VFoldr :: SBinOp t f -> VExpr t 0 -> VExpr t dim -> VExpr t 0
